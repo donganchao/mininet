@@ -382,7 +382,7 @@ class MininetRunner( object ):
         mn.stop()
 
         elapsed = float( time.time() - start )
-        info( 'completed in %0.3f seconds\n' % elapsed )
+        info( '(zhchen) completed in %0.3f seconds\n' % elapsed )
 
 
 if __name__ == "__main__":

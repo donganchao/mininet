@@ -12,3 +12,5 @@ doc/html
 doc/latex
 trunk
 
+.nfs.*
+*/.nfs.*
