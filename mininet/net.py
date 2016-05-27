@@ -108,7 +108,7 @@ from mininet.util import ( quietRun, fixLimits, numCores, ensureRoot,
 from mininet.term import cleanUpScreens, makeTerms
 
 # Mininet version: should be consistent with README and LICENSE
-VERSION = "2.2.1"
+VERSION = "2.3.0d1"
 
 class Mininet( object ):
     "Network emulation with hosts spawned in network namespaces."
@@ -281,7 +281,7 @@ class Mininet( object ):
                 # Use first switch if not specified
                 connect = self.switches[ 0 ]
             # Connect the nat to the switch
-            self.addLink( nat, self.switches[ 0 ] )
+            self.addLink( nat, connect )
             # Set the default route on hosts
             natIP = nat.params[ 'ip' ].split('/')[ 0 ]
             for host in self.hosts:
@@ -357,6 +357,8 @@ class Mininet( object ):
             options.setdefault( 'port1', port1 )
         if port2 is not None:
             options.setdefault( 'port2', port2 )
+        if self.intf is not None:
+            options.setdefault( 'intf', self.intf )
         # Set default MAC - this should probably be in Link
         options.setdefault( 'addr1', self.randMac() )
         options.setdefault( 'addr2', self.randMac() )
@@ -765,8 +767,14 @@ class Mininet( object ):
         cliout = client.cmd( iperfArgs + '-t %d -c ' % seconds +
                              server.IP() + ' ' + bwArgs )
         debug( 'Client output: %s\n' % cliout )
+        servout = ''
+        # We want the last *b/sec from the iperf server output
+        # for TCP, there are two fo them because of waitListening
+        count = 2 if l4Type == 'TCP' else 1
+        while len( re.findall( '/sec', servout ) ) < count:
+            servout += server.monitor( timeoutms=5000 )
         server.sendInt()
-        servout = server.waitOutput()
+        servout += server.waitOutput()
         debug( 'Server output: %s\n' % servout )
         result = [ self._parseIperf( servout ), self._parseIperf( cliout ) ]
         if l4Type == 'UDP':
