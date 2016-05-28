@@ -5,6 +5,7 @@ then
 else
   case $1 in
   start)
+	modprobe openvswitch
 	ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock & #启动服务器
 	ovs-vswitchd & #启动交换机
 	ovs-vsctl show  #查看交换机状态
