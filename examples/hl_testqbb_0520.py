@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding:utf-8 -*-
 from mininet.topo import Topo
 from mininet.net import Mininet
 from mininet.util import dumpNodeConnections
@@ -100,7 +101,8 @@ def checkTimer():   #no timer in use now
     result = os.popen(command).read()
     parsedResult = json.loads(result)
    
-    leftPackets2 = parsedResult['queue_sts_reply'][0]['queue_sts'][2]['leftPackets']
+    #leftPackets2 = parsedResult['queue_sts_reply'][0]['queue_sts'][2]['leftPackets']
+    leftPackets2 ="400" #自定义值, 跳过后面的if elif 自定义带宽调整
     leftInt2 = int(leftPackets2)
    
     print "s2-eth3 queue3 leftpackets:"+leftPackets2
@@ -155,8 +157,10 @@ def checkTimer():   #no timer in use now
     command = "curl -s http://192.168.57.2:8080/wm/core/switch/queue/00:00:00:00:00:00:00:01/2/json"
     result = os.popen(command).read()
     parsedResult = json.loads(result)
+    print parsedResult
    
-    leftPackets2 = parsedResult['queue_sts_reply'][0]['queue_sts'][2]['leftPackets']
+    #leftPackets2 = parsedResult['queue_sts_reply'][0]['queue_sts'][2]['leftPackets']
+    leftPackets2 ="400" #自定义值, 跳过后面的if elif 自定义带宽调整
     leftInt2 = int(leftPackets2)
  
     print "s1-eth3 queue3 leftpackets:"+leftPackets2
@@ -176,13 +180,13 @@ def checkTimer():   #no timer in use now
     command = "curl -s http://192.168.57.2:8080/wm/core/switch/queue/00:00:00:00:00:00:00:02/1/json"
     result = os.popen(command).read()
     parsedResult = json.loads(result)  
-    leftPackets2 = parsedResult['queue_sts_reply'][0]['queue_sts'][1]['leftPackets']
+    #leftPackets2 = parsedResult['queue_sts_reply'][0]['queue_sts'][1]['leftPackets']
     print "s2-eth2 queue2 leftpackets:"+leftPackets2
 
     command = "curl -s http://192.168.57.2:8080/wm/core/switch/queue/00:00:00:00:00:00:00:01/1/json"
     result = os.popen(command).read()
     parsedResult = json.loads(result)
-    leftPackets2 = parsedResult['queue_sts_reply'][0]['queue_sts'][2]['leftPackets']
+    #leftPackets2 = parsedResult['queue_sts_reply'][0]['queue_sts'][2]['leftPackets']
     print "s1-eth3 queue2 leftpackets:"+leftPackets2
     #print '%s:' % h1.name, h1.monitor().strip()
 
