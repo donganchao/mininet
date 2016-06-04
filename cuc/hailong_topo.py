@@ -57,7 +57,10 @@ def qbbTest():
     "Create and test our QBB network standard"
     qbbTopo = QbbTopo()
     global net
-    net = Mininet(topo=qbbTopo, controller=None, link=TCLink)
+    #MMininet 类 API 参考: http://mininet.org/api/classmininet_1_1net_1_1Mininet.html#a1ed0f0c8ba06a398e02f3952cc4c8393
+    #命令行参数对应 --mac => autoSetMacs
+    net = Mininet(topo=qbbTopo, controller=None, link=TCLink, autoSetMacs=True)
+
     net.addController('c0', controller=RemoteController, ip='192.168.57.2', port=6653)
     net.start()
     print "链路状态为: "
@@ -73,7 +76,7 @@ def qbbTest():
     # thread = threadOne(1,7)
     # thread.start()
 
-    # CLI(net) #激活命令行交互
+    CLI(net) #激活命令行交互
     net.stop()
 
 
