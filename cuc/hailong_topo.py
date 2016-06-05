@@ -1,8 +1,10 @@
-# --*-- coding:utf-8 --*--
 # !/usr/bin/python
+# --*-- coding:utf-8 --*--
+
 
 """
-海龙拓扑测试
+origined from 海龙拓扑测试
+revised by zhchen
 Usage:
 sudo mn -c ; sudo python cuc/hailong_topo.py
 """
@@ -26,8 +28,11 @@ global popens
 
 
 class QbbTopo(Topo):
-    "Qbb experiment test topology"
-    "@ZHL@CUC@2015.12.26"
+    """
+    Qbb experiment test topology
+    @ZHL@CUC@2015.12.26"
+    拓扑图: https://www.processon.com/view/link/5752d7f1e4b0695484404d39
+    """
 
     def build(self):
         leftSwitch = self.addSwitch('s1')
@@ -43,10 +48,11 @@ class QbbTopo(Topo):
         self.addLink(leftHost, leftSwitch)
         self.addLink(rightHost, leftSwitch)
         self.addLink(leftSwitch, middleSwitch1)
-        # s3 <-> s4
-        # 查看链路状态
-        # tc qdisc show dev s3-eth2
-        # tc class show dev s3-eth2
+        """
+        # s3 <-> s4 查看 含延时链路状态
+        tc qdisc show dev s3-eth2
+        tc class show dev s3-eth2
+        """
         self.addLink(middleSwitch1, middleSwitch2, delay='10ms', use_htb=True)
         self.addLink(middleSwitch2, rightSwitch)
         self.addLink(serverHost1, rightSwitch)
@@ -59,14 +65,43 @@ def qbbTest():
     global net
     #MMininet 类 API 参考: http://mininet.org/api/classmininet_1_1net_1_1Mininet.html#a1ed0f0c8ba06a398e02f3952cc4c8393
     #命令行参数对应 --mac => autoSetMacs
-    net = Mininet(topo=qbbTopo, controller=None, link=TCLink, autoSetMacs=True)
+    net = Mininet(topo=qbbTopo, controller=None, link=TCLink, autoSetMacs=True, xterms=True)
 
     net.addController('c0', controller=RemoteController, ip='192.168.57.2', port=6653)
     net.start()
-    print "链路状态为: "
-    print os.popen('tc qdisc show dev s3-eth2').readlines()
 
-    # os.popen('sudo ovs-vsctl -- set port s2-eth1 qos=@4mqos -- set port s2-eth2 qos=@4mqos -- set port s2-eth3 qos=@4mqos -- --id=@4mqos create qos type=linux-htb queues=0=@q0,1=@q1,2=@q2 -- --id=@q0 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 -- --id=@q1 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 -- --id=@q2 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 -- set port s1-eth1 qos=@5mqos2 -- set port s1-eth2 qos=@5mqos2  -- set port s1-eth3 qos=@5mqos2 -- --id=@5mqos2 create qos type=linux-htb queues=0=@q3,1=@q4,2=@q5 -- --id=@q3 create queue other-config:min-rate=5000000 other-config:max-rate=5000000 -- --id=@q4 create queue other-config:min-rate=5000000 other-config:max-rate=5000000 -- --id=@q5 create queue other-config:min-rate=5000000 other-config:max-rate=5000000')
+
+    print "调整 s1-eth1 qlen: sudo ip link set txqueuelen 500 dev s1-eth1"
+    os.popen("sudo ip link set txqueuelen 500 dev s1-eth1")
+
+    print "创建 s2 s3 4m 5m QoS 队列"
+    os.popen("""sudo ovs-vsctl \
+        -- set port s2-eth1 qos=@4mqos \
+        -- set port s2-eth2 qos=@4mqos \
+        -- set port s2-eth3 qos=@4mqos \
+        -- --id=@4mqos create qos type=linux-htb queues=0=@q0,1=@q1,2=@q2 \
+        -- --id=@q0 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 \
+        -- --id=@q1 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 \
+        -- --id=@q2 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 \
+        -- set port s1-eth1 qos=@5mqos2 \
+        -- set port s1-eth2 qos=@5mqos2 \
+        -- set port s1-eth3 qos=@5mqos2 \
+        -- --id=@5mqos2 create qos type=linux-htb queues=0=@q3,1=@q4,2=@q5 \
+        -- --id=@q3 create queue other-config:min-rate=5000000 other-config:max-rate=5000000 \
+        -- --id=@q4 create queue other-config:min-rate=5000000 other-config:max-rate=5000000 \
+        -- --id=@q5 create queue other-config:min-rate=5000000 other-config:max-rate=5000000 """)
+
+    print "普通接口 s3-eth1 状态为:  tc qdisc show dev s3-eth1"
+    print os.popen('tc qdisc show dev s3-eth1').readlines()
+    print "延时链路 s3-eth2 <->s4-eth1 接口状态为:  tc qdisc show dev s3-eth2 / s4-eth1"
+    print os.popen('tc qdisc show dev s3-eth2').readlines()
+    print os.popen('tc qdisc show dev s4-eth1').readlines()
+    print "队列接口 s2-eth1, tc qdisc show 采用的应是 htb, 而不是 pfifo_fast(普通) 或 netem(延时) "
+    print os.popen('tc qdisc show dev s2-eth1').readlines()
+    print "队列接口 s2-eth1,  tc class show "
+    print os.popen('tc class show dev s2-eth1').readlines()
+
+
     # check = threading.Timer(5, checkTimer)
     # check.start()
 
