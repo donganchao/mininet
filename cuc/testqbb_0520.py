@@ -43,7 +43,7 @@ def qbbTest():
     qbbTopo = QbbTopo()
     global net
     net = Mininet(topo=qbbTopo,controller=None,link=TCLink)
-    net.addController( 'c0', controller=RemoteController, ip='192.168.200.128', port=6653 )
+    net.addController( 'c0', controller=RemoteController, ip='192.168.57.2', port=6653 )
     net.start()
     os.popen('sudo ovs-vsctl -- set port s2-eth1 qos=@4mqos -- set port s2-eth2 qos=@4mqos -- set port s2-eth3 qos=@4mqos -- --id=@4mqos create qos type=linux-htb queues=0=@q0,1=@q1,2=@q2 -- --id=@q0 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 -- --id=@q1 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 -- --id=@q2 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 -- set port s1-eth1 qos=@5mqos2 -- set port s1-eth2 qos=@5mqos2  -- set port s1-eth3 qos=@5mqos2 -- --id=@5mqos2 create qos type=linux-htb queues=0=@q3,1=@q4,2=@q5 -- --id=@q3 create queue other-config:min-rate=5000000 other-config:max-rate=5000000 -- --id=@q4 create queue other-config:min-rate=5000000 other-config:max-rate=5000000 -- --id=@q5 create queue other-config:min-rate=5000000 other-config:max-rate=5000000')
     check = threading.Timer(5, checkTimer)
@@ -96,7 +96,7 @@ def checkTimer():   #no timer in use now
     '''
 
     #another method rest api
-    command = "curl -s http://192.168.200.128:8080/wm/core/switch/queue/00:00:00:00:00:00:00:02/2/json"
+    command = "curl -s http://192.168.57.2:8080/wm/core/switch/queue/00:00:00:00:00:00:00:02/2/json"
     result = os.popen(command).read()
     parsedResult = json.loads(result)
    
@@ -106,13 +106,13 @@ def checkTimer():   #no timer in use now
     print "s2-eth3 queue3 leftpackets:"+leftPackets2
     if (leftInt2 > 800) and (flags2 == False):
         flags2 = True
-        command2 = "curl -s http://192.168.200.128:8080/wm/core/switch/queuerate/00:00:00:00:00:00:00:01/s1-eth3/2/1000000/json"
+        command2 = "curl -s http://192.168.57.2:8080/wm/core/switch/queuerate/00:00:00:00:00:00:00:01/s1-eth3/2/1000000/json"
         result2 = os.popen(command2).read()
         #os.popen('tc class change dev s1-eth2 parent 1:fffe classid 1:3 htb rate 1000000bit ceil 1000000bit')
         print "change s1-eth3 to 1M"
     elif (leftInt2 < 300) and (flags2 == True):
         flags2 = False
-        command2 = "curl -s http://192.168.200.128:8080/wm/core/switch/queuerate/00:00:00:00:00:00:00:01/s1-eth3/2/5000000/json"
+        command2 = "curl -s http://192.168.57.2:8080/wm/core/switch/queuerate/00:00:00:00:00:00:00:01/s1-eth3/2/5000000/json"
         result2 = os.popen(command2).read()
         #os.popen('tc class change dev s1-eth2 parent 1:fffe classid 1:3 htb rate 5000000bit ceil 5000000bit')
         print "change s1-eth3 to 5M"
@@ -152,7 +152,7 @@ def checkTimer():   #no timer in use now
     '''
 
     #another method rest api
-    command = "curl -s http://192.168.200.128:8080/wm/core/switch/queue/00:00:00:00:00:00:00:01/2/json"
+    command = "curl -s http://192.168.57.2:8080/wm/core/switch/queue/00:00:00:00:00:00:00:01/2/json"
     result = os.popen(command).read()
     parsedResult = json.loads(result)
    
@@ -173,13 +173,13 @@ def checkTimer():   #no timer in use now
         print "change h2 to fast speed"  
 
     #test queue 2
-    command = "curl -s http://192.168.200.128:8080/wm/core/switch/queue/00:00:00:00:00:00:00:02/1/json"
+    command = "curl -s http://192.168.57.2:8080/wm/core/switch/queue/00:00:00:00:00:00:00:02/1/json"
     result = os.popen(command).read()
     parsedResult = json.loads(result)  
     leftPackets2 = parsedResult['queue_sts_reply'][0]['queue_sts'][1]['leftPackets']
     print "s2-eth2 queue2 leftpackets:"+leftPackets2
 
-    command = "curl -s http://192.168.200.128:8080/wm/core/switch/queue/00:00:00:00:00:00:00:01/1/json"
+    command = "curl -s http://192.168.57.2:8080/wm/core/switch/queue/00:00:00:00:00:00:00:01/1/json"
     result = os.popen(command).read()
     parsedResult = json.loads(result)
     leftPackets2 = parsedResult['queue_sts_reply'][0]['queue_sts'][2]['leftPackets']
