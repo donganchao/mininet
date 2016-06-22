@@ -41,10 +41,10 @@ class QbbTopo(Topo):
         middleSwitch1 = self.addSwitch('s3')
         middleSwitch2 = self.addSwitch('s4')
 
-        leftHost = self.addHost('h1')
-        rightHost = self.addHost('h2')
-        serverHost1 = self.addHost('h3')
-        serverHost2 = self.addHost('h4')
+        leftHost = self.addHost('h1', inNamespace=False)
+        rightHost = self.addHost('h2', inNamespace=False)
+        serverHost1 = self.addHost('h3', inNamespace=False)
+        serverHost2 = self.addHost('h4', inNamespace=False)
 
         self.addLink(leftHost, leftSwitch)
         self.addLink(rightHost, leftSwitch)
@@ -78,21 +78,22 @@ def qbbTest():
     os.popen("sudo ip link set txqueuelen 500 dev s1-eth1")
 
     print "创建 s2 s3 4m 5m QoS 队列"
-    os.popen("""sudo ovs-vsctl \
-        -- set port s2-eth1 qos=@4mqos \
-        -- set port s2-eth2 qos=@4mqos \
-        -- set port s2-eth3 qos=@4mqos \
-        -- --id=@4mqos create qos type=linux-htb queues=0=@q0,1=@q1,2=@q2 \
-        -- --id=@q0 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 \
-        -- --id=@q1 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 \
-        -- --id=@q2 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 \
-        -- set port s1-eth1 qos=@5mqos2 \
-        -- set port s1-eth2 qos=@5mqos2 \
-        -- set port s1-eth3 qos=@5mqos2 \
-        -- --id=@5mqos2 create qos type=linux-htb queues=0=@q3,1=@q4,2=@q5 \
-        -- --id=@q3 create queue other-config:min-rate=5000000 other-config:max-rate=5000000 \
-        -- --id=@q4 create queue other-config:min-rate=5000000 other-config:max-rate=5000000 \
-        -- --id=@q5 create queue other-config:min-rate=5000000 other-config:max-rate=5000000 """)
+
+    # os.popen("""sudo ovs-vsctl \
+    #     -- set port s2-eth1 qos=@4mqos \
+    #     -- set port s2-eth2 qos=@4mqos \
+    #     -- set port s2-eth3 qos=@4mqos \
+    #     -- --id=@4mqos create qos type=linux-htb queues=0=@q0,1=@q1,2=@q2 \
+    #     -- --id=@q0 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 \
+    #     -- --id=@q1 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 \
+    #     -- --id=@q2 create queue other-config:min-rate=4000000 other-config:max-rate=4000000 \
+    #     -- set port s1-eth1 qos=@5mqos2 \
+    #     -- set port s1-eth2 qos=@5mqos2 \
+    #     -- set port s1-eth3 qos=@5mqos2 \
+    #     -- --id=@5mqos2 create qos type=linux-htb queues=0=@q3,1=@q4,2=@q5 \
+    #     -- --id=@q3 create queue other-config:min-rate=5000000 other-config:max-rate=5000000 \
+    #     -- --id=@q4 create queue other-config:min-rate=5000000 other-config:max-rate=5000000 \
+    #     -- --id=@q5 create queue other-config:min-rate=5000000 other-config:max-rate=5000000 """)
 
     print "普通接口 s3-eth1 状态为:  tc qdisc show dev s3-eth1"
     print os.popen('tc qdisc show dev s3-eth1').readlines()

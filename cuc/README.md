@@ -7,4 +7,8 @@
 
 - `hailong_topo_local_controller.py` 本地ovs controller 拓扑, 作本地测试用
 
-``` sudo mn -c && sudo python hailong_topo_local_controller.py ```
+```
+cd /opt/mininet
+sudo ./bin/ovs-rc.sh #(可选) 启动我们的 ovs-vswitch服务
+sudo mn -c && sudo python cuc/hailong_topo_local_controller.py  #设置拓扑 
+```
