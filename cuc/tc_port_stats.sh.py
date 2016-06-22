@@ -126,8 +126,8 @@ def show_watch_dropped():
 def runner():
     #show_qdisc()
     #show_class()
-    show_qdisc_errors_once()
-    #show_watch_dropped()
+    #show_qdisc_errors_once()
+    show_watch_dropped()
 
 
 if __name__ == "__main__":
