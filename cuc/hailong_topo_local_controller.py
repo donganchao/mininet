@@ -41,10 +41,10 @@ class QbbTopo(Topo):
         middleSwitch1 = self.addSwitch('s3')
         middleSwitch2 = self.addSwitch('s4')
 
-        leftHost = self.addHost('h1', inNamespace=False)
-        rightHost = self.addHost('h2', inNamespace=False)
-        serverHost1 = self.addHost('h3', inNamespace=False)
-        serverHost2 = self.addHost('h4', inNamespace=False)
+        leftHost = self.addHost('h1', inNamespace=True)
+        rightHost = self.addHost('h2', inNamespace=True)
+        serverHost1 = self.addHost('h3', inNamespace=True)
+        serverHost2 = self.addHost('h4', inNamespace=True)
 
         self.addLink(leftHost, leftSwitch)
         self.addLink(rightHost, leftSwitch)
