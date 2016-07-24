@@ -58,7 +58,7 @@ class InternetTopo(Topo):
 
 def run():
     "Create network and run the CLI"
-    topo = InternetTopo()
+    topo = InternetTopo(n=3)
     net = Mininet(topo=topo)
     net.start()
     CLI(net)

@@ -8,7 +8,7 @@ from mininet.util import pmonitor
 from time import time
 from signal import SIGINT
 
-def pmonitorTest( N=3, seconds=10 ):
+def pmonitorTest( N=5, seconds=10 ):
     "Run pings and monitor multiple hosts using pmonitor"
     topo = SingleSwitchTopo( N )
     net = Mininet( topo )

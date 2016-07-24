@@ -50,7 +50,7 @@ class Console( Frame ):
         self.textStyle = {
             'font': 'Monaco 7',
             'bg': 'black',
-            'fg': 'green',
+            'fg': 'white',
             'width': self.width,
             'height': self.height,
             'relief': 'sunken',

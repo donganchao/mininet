@@ -79,7 +79,10 @@ class NAT( Node ):
            flush: flush iptables before installing NAT rules"""
         super( NAT, self ).__init__( name, **params )
 
+
         self.subnet = subnet
+        print ("using %s subnet" % subnet)
+
         self.localIntf = localIntf
         self.flush = flush
         self.forwardState = self.cmd( 'sysctl -n net.ipv4.ip_forward' ).strip()
